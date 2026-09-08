@@ -24,7 +24,8 @@ class CommandInjectionEngine(BaseEngine):
         ]
 
         for payload in payloads:
-            url = f"{base}/cmd?host={payload}"
+            encoded = urllib.parse.quote(payload)
+            url = f"{base}/cmd?host={encoded}"
             status, body, _ = self._get(url)
             if self.MARKER in body:
                 findings.append(self._finding(
@@ -38,3 +39,6 @@ class CommandInjectionEngine(BaseEngine):
                 break
 
         return findings
+
+
+import urllib.parse

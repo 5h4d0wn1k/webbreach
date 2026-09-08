@@ -212,7 +212,14 @@ class LabHandler(http.server.BaseHTTPRequestHandler):
         # --- Header Injection ---
         if path == "/header_inject":
             val = qs.get("val", ["safe"])[0]
-            self._send(200, "<p>OK</p>", extra_headers={"X-Custom": val})
+            # Simulate vulnerable header reflection — pass value as-is
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            # Intentionally unsanitized: allows CRLF injection in real HTTP servers
+            raw_header = f"X-Custom: {val}\r\n"
+            self.send_header("X-Custom", val)
+            self.end_headers()
+            self.wfile.write(b"<p>OK</p>")
             return
 
         # --- Path Traversal ---
@@ -220,10 +227,16 @@ class LabHandler(http.server.BaseHTTPRequestHandler):
             self._send(200, '<p>POST filename to /traversal</p>')
             return
 
-        # --- Command Injection (reflected) ---
+        # --- Command Injection (reflected + simulated exec) ---
         if path == "/cmd":
             host = qs.get("host", ["localhost"])[0]
-            self._send(200, f"<pre>Pinging {host}...</pre>")
+            output = f"Pinging {host}..."
+            # Simulate: if shell metacharacters present, "execute" injected command
+            import re as _re
+            m = _re.search(r'(?:;\s*|`\s*)echo\s+(WBCMD_\w+)', host)
+            if m:
+                output += f"\n{m.group(1)}"
+            self._send(200, f"<pre>{output}</pre>")
             return
 
         # --- NoSQL injection ---

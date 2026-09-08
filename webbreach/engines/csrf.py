@@ -15,8 +15,13 @@ class CSFREngine(BaseEngine):
 
         status, body, headers = self._get(url)
 
-        # Check: form lacks CSRF token
-        has_token = bool(re.search(r'(csrf|_token|authenticity)', body, re.I))
+        # Check: form lacks CSRF token — look for hidden inputs with token-like names
+        # Exclude action URLs from the check
+        form_body = re.sub(r'action="[^"]*"', '', body, flags=re.I)
+        has_token = bool(re.search(
+            r'<input[^>]*type=["\']hidden["\'][^>]*(?:csrf|_token|authenticity|nonce)',
+            form_body, re.I
+        ))
         if not has_token:
             findings.append(self._finding(
                 severity=Severity.MEDIUM,
