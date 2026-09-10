@@ -1,4 +1,5 @@
 # webbreach
+![tests](https://github.com/5h4d0wn1k/webbreach/actions/workflows/ci.yml/badge.svg) ![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 Web application exploitation framework — OWASP Top-10 engines, built-in localhost vuln targets, AI-guided scan queue
 
@@ -143,3 +144,6 @@ python3 -m webbreach report
 See [METRICS.md](METRICS.md) for measured numbers.
 
 **v1.0.0** — stdlib-only, 13 engines, 24 tests, 100% pass rate, 62 demo findings.
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md).
